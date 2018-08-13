@@ -74,7 +74,7 @@ if args.key and args.val:
 elif args.key:
     #print("we have key, start searching")
     result = search(key_name)
-    print (', '.join([str(elem) for elem in result]))
+    print (', '.join([str(elem) for elem in result]))               # распечатать чтобы все было в строчку через запятую и без последней запятой,напр. 33, 33, 33
 
 else:
     print("")
@@ -96,7 +96,7 @@ storage_path = os.path.join(tempfile.gettempdir(), 'storage.data')
 
 
 def clear():
-    os.remove(storage_path)
+    os.remove(storage_path)                 # os.remove() will remove a file
 
 
 def get_data():
@@ -124,7 +124,7 @@ def put(key, value):
 
 def get(key):
     data = get_data()
-    return data.get(key)
+    return data.get(key)                    # Use dict.get(key[, default]) to assign default values
 
 
 if __name__ == '__main__':
