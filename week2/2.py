@@ -13,7 +13,7 @@ from urllib.request import urlopen
 from xml.etree.ElementTree import parse
 #response = requests.get("http://www.cbr.ru/scripts/XML_daily_eng.asp?date_req=06/08/2019")
 #data = response.content
-print(data)
+#print(data)
 
 
 var_url = urlopen('http://www.cbr.ru/scripts/XML_daily_eng.asp?date_req=06/08/2019')
