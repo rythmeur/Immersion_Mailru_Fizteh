@@ -19,3 +19,4 @@ from xml.etree.ElementTree import parse
 var_url = urlopen('http://www.cbr.ru/scripts/XML_daily_eng.asp?date_req=06/08/2019')
 xmldoc = parse(var_url)
 print(xmldoc)
+print(xmldoc)
