@@ -81,6 +81,7 @@ if __name__ == "__main__":
 
 
     file_obj_1 = File(path_to_file + '_1')
+    print("type(file_obj_1) ", type(file_obj_1))
     file_obj_2 = File(path_to_file + '_2')
     file_obj_1.write('line 1\n')
     file_obj_2.write('line 2\n')
@@ -89,3 +90,6 @@ if __name__ == "__main__":
     print(new_file_obj)
     for line in new_file_obj:
         print(ascii(line))
+
+    r = type(new_file_obj)(path_to_file + '_3')
+    print("type(File)(path_to_file + '_3') ", r)
