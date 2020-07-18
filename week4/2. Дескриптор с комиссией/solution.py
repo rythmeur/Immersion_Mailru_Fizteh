@@ -27,5 +27,7 @@ if __name__ == "__main__":
     # execute only if run as a script
     new_account = Account(0.1)
     new_account.amount = 100
+    v = Value()
+    print(v)
 
     print(new_account.amount)

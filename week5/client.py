@@ -6,7 +6,7 @@ class ClientError (Exception):
         self.value = value
         # __str__ is to print() the value
     def __str__(self):
-        return ("От сервера получено " + repr(self.value))
+        return ("От сервера получено " + repr(self.value)) #мой комментарий когда вылезает эта ошибка
 
 class Client:
 
@@ -69,10 +69,10 @@ class Client:
 
             response_splitted = response.split("\n")
             # print(response_splitted)
-            if response_splitted[0] != "ok" or (response[-2:-1]+response[-1]) != "\n\n":
+            if response_splitted[0] != "ok" or (response[-2:-1]+response[-1]) != "\n\n": #т.к. если нужен кусок строки от какой-то до конца, -1 означет до последнего символа, не включая - поэтому последний символ приходится добавлять вручную, и да, \n - это один символ
                 raise ClientError (response_splitted[0])
 
-            for d in response_splitted[1:-2]:
+            for d in response_splitted[1:-2]: #прохожу по ответу сервера за исключением начала ответа и финала
                 dannie = d.split(" ")
                 if len(dannie) == 3:
                     if dannie[0] not in dict_with_metrika.keys():
@@ -81,10 +81,7 @@ class Client:
                         dict_with_metrika[dannie[0]].append((int(dannie[2]),float(dannie[1])))
                         dict_with_metrika[dannie[0]].sort()
                 else:
-                    raise ClientError(d)
-
-
-
+                    raise ClientError(d) #если в ответе сервера не три элемента, то ошибка
 
         except socket.timeout:
             print("send data timeout")
@@ -93,21 +90,20 @@ class Client:
 
         return dict_with_metrika
 
-
 if __name__ == "__main__":
     client = Client("127.0.0.1", 8888, timeout=2)
-    #
-    # client.put("palm.cpu", 0.5, timestamp=1150864247)
-    #
-    # client.put("palm.cpu", 2.0, timestamp=1150864248)
-    #
-    # client.put("palm.cpu", 0.5, timestamp=1150864248)
-    #
-    # client.put("eardrum.cpu", 3, timestamp=1150864250)
-    #
-    # client.put("eardrum.cpu", 4, timestamp=1150864251)
-    #
-    # client.put("eardrum.memory", 4200000)
-    #
+
+    client.put("palm.cpu", 0.5, timestamp=1150864247)
+
+    client.put("palm.cpu", 2.0, timestamp=1150864248)
+
+    client.put("palm.cpu", 0.5, timestamp=1150864248)
+
+    client.put("eardrum.cpu", 3, timestamp=1150864250)
+
+    client.put("eardrum.cpu", 4, timestamp=1150864251)
+
+    client.put("eardrum.memory", 4200000)
+
     print(client.get("*"))
-    # print(client.get("palm.cpu"))
+    print(client.get("palm.cpu"))
