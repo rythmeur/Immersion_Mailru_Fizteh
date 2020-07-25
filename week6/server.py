@@ -4,15 +4,16 @@
 import socket
 import asyncio
 
-# Проблема - не обновлять коннекшн, не разрывать его и соотв. каждый раз не обнулять мою базу self.saved_data
+# Проблема - не обновлять коннекшн, не разрывать его и соотв. каждый раз не обнулять мою базу saved_data
 
 class ClientServerProtocol(asyncio.Protocol):
-    def __init__(self):
-        self.saved_data = {}
+
+    global saved_data
+    saved_data = {}
 
     def connection_made(self, transport): #protocol calls transport methods to send data, while the transport calls protocol methods to pass it data that has been received.
         peername = transport.get_extra_info('peername')
-        print('Connection from {}'.format(peername), "self.saved_data =", self.saved_data )
+        print('Connection from {}'.format(peername), "saved_data =", saved_data )
         self.transport = transport
 
 
@@ -38,24 +39,24 @@ class ClientServerProtocol(asyncio.Protocol):
 
 
         if message[0:4] == "put " and message[-1] == "\n":
-            print("start self.saved_data=", self.saved_data)
+            print("start saved_data=", saved_data)
             status, payload = message.split(" ", 1)
             payload = payload.strip()
             put_msg = payload.split()
             print("status= ", status, "put_msg= ", put_msg)
             if len(put_msg) == 3:
                 try:
-                    a = float(put_msg[1] )
-                    b = int(put_msg[2])
+                    timestamp = str(float(put_msg[1] ))
+                    znachenie = str(int(put_msg[2]))
                 except ValueError:
                     return "error\nwrong command\n\n"
 
-                if put_msg[0] in self.saved_data:
-                    self.saved_data [put_msg[0]][put_msg[2]] = put_msg[1]
+                if put_msg[0] in saved_data:
+                    saved_data [put_msg[0]][put_msg[2]] = timestamp
 
 
                 else:
-                    self.saved_data [put_msg[0]] = {put_msg[2]:put_msg[1]}
+                    saved_data [put_msg[0]] = {znachenie:timestamp}
 
                 response = "ok\n\n"
 
@@ -68,10 +69,10 @@ class ClientServerProtocol(asyncio.Protocol):
             print("get!")
             status, payload = message.split(" ", 1)
             get_msg = payload.strip()
-            if get_msg in self.saved_data and (" " not in get_msg):
+            if get_msg in saved_data and (" " not in get_msg):
                 response = "ok\n"
-                print("self.saved_data[get_msg] =", self.saved_data[get_msg])
-                for timestamp, value in self.saved_data[get_msg].items():
+                print("saved_data[get_msg] =", saved_data[get_msg])
+                for timestamp, value in saved_data[get_msg].items():
                     print("timestamp =", timestamp, "value =", value )
                     response = response + get_msg + " " + value + " " + timestamp + "\n"
                 response = response + "\n"
@@ -79,7 +80,7 @@ class ClientServerProtocol(asyncio.Protocol):
 
             elif get_msg == "*":
                 response = "ok\n"
-                for key,val in self.saved_data.items():
+                for key,val in saved_data.items():
 
 
                     for timestamp, value in val.items():
@@ -100,7 +101,7 @@ class ClientServerProtocol(asyncio.Protocol):
             response = "error\nwrong command\n\n"
 
 
-        print("finish self.saved_data=", self.saved_data)
+        print("finish saved_data=", saved_data)
         print("response", response)
 
 
@@ -112,8 +113,8 @@ class ClientServerProtocol(asyncio.Protocol):
 def  run_server(host, port):
     loop = asyncio.get_event_loop()
     # Each client connection will create a new protocol instance
-    coro = loop.create_server(ClientServerProtocol,host, port)
-    server = loop.run_until_complete(coro)
+    coroutine = loop.create_server(ClientServerProtocol,host, port)
+    server = loop.run_until_complete(coroutine)
 
     # Serve requests until Ctrl+C is pressed
     print('Serving on {}'.format(server.sockets[0].getsockname()))
